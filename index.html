@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Wiki · 少女手帳簡報展示集</title>
+  <!-- Google Fonts 優雅襯線與手寫字體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Noto+Serif+TC:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #F4EFE6 url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23E5DDD0' fill-opacity='0.45' fill-rule='evenodd'%3E%3Cpath d='M0 50L50 0H25L0 25M50 50V25L25 50'/%3E%3C/g%3E%3C/svg%3E");
+      color: #4A4036;
+      font-family: 'Noto Serif TC', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px 80px 20px;
+    }
+
+    /* 頂部手帳封面標題區 */
+    .portal-header {
+      width: 100%;
+      max-width: 980px;
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    /* 手撕紙膠帶標題 */
+    .washi-title-wrap {
+      display: inline-block;
+      position: relative;
+      background: #F3C3C0;
+      padding: 12px 42px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+      transform: rotate(-1.5deg);
+      border-radius: 2px;
+      margin-bottom: 16px;
+    }
+    .washi-title-wrap::before, .washi-title-wrap::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 12px;
+      background: inherit;
+    }
+    .washi-title-wrap::before { left: -7px; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+    .washi-title-wrap::after { right: -7px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+
+    .portal-h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #552F2D;
+      letter-spacing: 1px;
+    }
+
+    .portal-desc {
+      font-size: 16px;
+      color: #7A695C;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* 頂部裝飾郵戳徽章 */
+    .stamp-badge {
+      position: absolute;
+      right: 10px;
+      top: -10px;
+      width: 76px;
+      height: 76px;
+      border: 2px dashed #C9A08E;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #B57F6D;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      transform: rotate(10deg);
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    /* 統計小標籤列 */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 18px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+    }
+    .stat-pill {
+      background: #FFFDF8;
+      border: 1px solid #E5D7C7;
+      padding: 5px 16px;
+      border-radius: 999px;
+      color: #6D5C4F;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    /* 手帳主卡片網格 (Grid) */
+    .deck-grid {
+      width: 100%;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 36px;
+      margin-top: 20px;
+    }
+
+    /* 拍立得手帳卡片 */
+    .deck-card {
+      background: #FFFFFF;
+      border: 1px solid #ECE3D4;
+      border-radius: 6px;
+      padding: 20px 20px 32px 20px;
+      box-shadow: 0 12px 28px rgba(110, 85, 60, 0.1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .deck-card:nth-child(even) {
+      transform: rotate(1.2deg);
+    }
+    .deck-card:nth-child(odd) {
+      transform: rotate(-1.2deg);
+    }
+
+    .deck-card:hover {
+      transform: translateY(-8px) scale(1.02) rotate(0deg) !important;
+      box-shadow: 0 20px 40px rgba(140, 90, 70, 0.18);
+      border-color: #DFCAA7;
+    }
+
+    /* 頂部紙膠帶圖樣 */
+    .card-tape {
+      position: absolute;
+      top: -14px;
+      left: 36%;
+      width: 90px;
+      height: 24px;
+      background: rgba(235, 215, 185, 0.75);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transform: rotate(2deg);
+      border-radius: 1px;
+    }
+
+    /* 卡片封面相片區 */
+    .card-preview {
+      background: linear-gradient(135deg, #FDF2F0 0%, #F6E4D9 100%);
+      border-radius: 4px;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      margin-bottom: 20px;
+      position: relative;
+      border: 1px dashed rgba(200, 160, 140, 0.4);
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: #FFF;
+      color: #9A5046;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    .card-preview-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    .card-preview-h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #5C3230;
+      line-height: 1.4;
+    }
+
+    /* 卡片內容區 */
+    .card-body {
+      padding: 4px 6px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: #63554A;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px dashed #EAE0D2;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      color: #8C7C6D;
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      color: #9A5046;
+      font-size: 13px;
+      background: #FCECE9;
+      padding: 6px 14px;
+      border-radius: 999px;
+      transition: background 0.2s ease;
+    }
+    .deck-card:hover .card-cta {
+      background: #F8D8D3;
+    }
+
+    /* 底部收納備忘小紙條 */
+    .portal-footer {
+      width: 100%;
+      max-width: 980px;
+      margin-top: 60px;
+      background: #FFFDF8;
+      border: 1px solid #E5D7C7;
+      border-left: 6px solid #E2938A;
+      border-radius: 0 16px 16px 0;
+      padding: 22px 28px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      color: #6A5D52;
+    }
+
+    .footer-links a {
+      color: #8C473E;
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 16px;
+      padding-bottom: 2px;
+      border-bottom: 1px dashed #E2938A;
+    }
+    .footer-links a:hover {
+      color: #552F2D;
+    }
+
+    @media (max-width: 600px) {
+      .stamp-badge { display: none; }
+      .deck-grid { grid-template-columns: 1fr; }
+      .portal-footer { flex-direction: column; gap: 12px; text-align: center; }
+      .footer-links a { margin: 0 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 手帳封面標題 -->
+  <header class="portal-header">
+    <div class="stamp-badge">
+      DEEPSPACE<br>ARCHIVE<br>★ 2026 ★
+    </div>
+    
+    <div class="washi-title-wrap">
+      <h1 class="portal-h1">戀與深空 · 心動手帳簡報集</h1>
+    </div>
+    
+    <p class="portal-desc">
+      基於 Karpathy LLM Wiki 知識庫提煉 ✦ 典雅少女手帳與拍立得拼貼風簡報展示中心
+    </p>
+
+    <div class="stats-bar">
+      <div class="stat-pill">🎀 視覺風格：少女手帳 / 拍立得拼貼風</div>
+      <div class="stat-pill">📚 知識庫來源：Wiki 客觀知識層 (100% 條目考據)</div>
+      <div class="stat-pill">✨ 支援：KaTeX 公式 ✦ 全螢幕播放 (F) ✦ 講者備忘 (S)</div>
+    </div>
+  </header>
+
+  <!-- 簡報卡片網格 -->
+  <main class="deck-grid">
+
+    <!-- 卡片 1：男主介紹簡報 (全新上線) -->
+    <a href="./presentation/戀與深空男主介紹/index.html" class="deck-card">
+      <div class="card-tape" style="background: rgba(245, 205, 215, 0.75);"></div>
+      
+      <div class="card-preview" style="background: linear-gradient(135deg, #FFF3F0 0%, #FCE8E2 100%);">
+        <span class="card-badge" style="color: #B24E43;">NEW · 男主特輯</span>
+        <div class="card-preview-icon">✨ 💌 🗡️</div>
+        <div class="card-preview-h2">《戀與深空》五大男主心動檔案</div>
+      </div>
+
+      <div class="card-body">
+        <p class="card-desc">
+          完全依據 Wiki 現有條目提煉！沈星回（光）、黎深（冰）、祁煜（火）、秦徹（能量）、夏以晝（引力）的詳細身分檔案、外貌身高數值、Evol 超能力特性與心動名台詞考據。
+        </p>
+
+        <div class="card-meta">
+          <span>📅 2026-11-13 產出</span>
+          <span class="card-cta">翻開角色手帳 →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 卡片 2：玩法介紹簡報 -->
+    <a href="./presentation/戀與深空玩法介紹/index.html" class="deck-card">
+      <div class="card-tape"></div>
+      
+      <div class="card-preview">
+        <span class="card-badge">HOT · 玩法解析</span>
+        <div class="card-preview-icon">⚔️ 🔮 📸</div>
+        <div class="card-preview-h2">《戀與深空》玩法心動全景手帳</div>
+      </div>
+
+      <div class="card-body">
+        <p class="card-desc">
+          深入解析近未來 3D 即時動作戰鬥、能量點與誓約技循環、極限閃避刷新協助技 CD、2+4 思念卡組編隊法則與日常陪伴生活（影棚、喵喵牌、伴讀計時）。
+        </p>
+
+        <div class="card-meta">
+          <span>📅 2026-11-13 產出</span>
+          <span class="card-cta">翻開玩法手帳 →</span>
+        </div>
+      </div>
+    </a>
+
+  </main>
+
+  <!-- 底部筆記與備忘說明 -->
+  <footer class="portal-footer">
+    <div>
+      <strong>✦ 知識庫維護手札</strong>：目前已收錄「男主特輯」與「玩法解析」兩本少女手帳簡報！
+    </div>
+    <div class="footer-links">
+      <a href="./notes/2026-11-13-戀與深空男主介紹.md">📖 男主研究筆記</a>
+      <a href="./notes/2026-11-13-戀與深空玩法介紹.md">📖 玩法研究筆記</a>
+      <a href="./wiki/index.md">🗂️ Wiki 總目錄</a>
+    </div>
+  </footer>
+
+</body>
+</html>
