@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LLM Wiki · 少女手帳簡報展示集</title>
-  <!-- Google Fonts 優雅襯線與手寫字體 -->
+  <title>《戀與深空》玩法心動手帳 · 簡報展示</title>
+  <!-- Google Fonts: 襯線、手寫體與乾淨內文字型 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Noto+Serif+TC:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- KaTeX 數學公式支援 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -23,61 +29,142 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 48px 20px 80px 20px;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
     }
 
-    /* 頂部手帳封面標題區 */
-    .portal-header {
+    /* 頂部裝飾與手帳徽章 */
+    .deck-topbar {
       width: 100%;
-      max-width: 980px;
-      text-align: center;
-      margin-bottom: 40px;
-      position: relative;
+      max-width: 1060px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 10px;
     }
 
-    /* 手撕紙膠帶標題 */
-    .washi-title-wrap {
-      display: inline-block;
+    .deck-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      background: #EED7CF;
+      color: #8C473E;
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(140,71,62,0.1);
+    }
+
+    .deck-controls-hint {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      color: #85786C;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .key-tag {
+      background: #FFFFFF;
+      padding: 2px 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      font-weight: 700;
+      color: #443B33;
+    }
+
+    /* 簡報主舞台 (16:9 比例手帳大本子) */
+    .deck-viewport {
+      width: 100%;
+      max-width: 1060px;
+      aspect-ratio: 16 / 9;
+      background: #FFFDF9;
+      border: 2px solid #EADBCC;
+      border-radius: 28px;
+      box-shadow: 0 24px 60px rgba(110, 85, 60, 0.16), 0 4px 12px rgba(0,0,0,0.04);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 手帳邊緣裝飾：裝訂孔 / 圓弧微陰影 */
+    .deck-viewport::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 14px;
+      background: linear-gradient(to right, rgba(0,0,0,0.04), transparent);
+      pointer-events: none;
+    }
+
+    /* 逐頁 Slide 容器 */
+    .slide {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      padding: 44px 56px 40px 56px;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: scale(0.985);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* 手撕紙膠帶標題 (Washi Tape) */
+    .washi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .washi-tape {
       position: relative;
       background: #F3C3C0;
-      padding: 12px 42px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-      transform: rotate(-1.5deg);
-      border-radius: 2px;
-      margin-bottom: 16px;
+      padding: 8px 30px;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transform: rotate(-1deg);
+      border-radius: 1px;
     }
-    .washi-title-wrap::before, .washi-title-wrap::after {
+    .washi-tape.tape-green { background: #D5E2C9; }
+    .washi-tape.tape-apricot { background: #F6D8B8; }
+    .washi-tape.tape-purple { background: #DDD5E8; }
+
+    .washi-tape::before, .washi-tape::after {
       content: '';
       position: absolute;
       top: 0; bottom: 0;
-      width: 12px;
+      width: 10px;
       background: inherit;
     }
-    .washi-title-wrap::before { left: -7px; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
-    .washi-title-wrap::after { right: -7px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+    .washi-tape::before { left: -6px; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+    .washi-tape::after { right: -6px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
 
-    .portal-h1 {
-      font-size: 32px;
+    .slide-h1 {
+      font-size: 28px;
       font-weight: 700;
       color: #552F2D;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
-    .portal-desc {
-      font-size: 16px;
-      color: #7A695C;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      margin-top: 10px;
-      line-height: 1.6;
-    }
-
-    /* 頂部裝飾郵戳徽章 */
+    /* 印章效果 */
     .stamp-badge {
-      position: absolute;
-      right: 10px;
-      top: -10px;
-      width: 76px;
-      height: 76px;
+      width: 68px;
+      height: 68px;
       border: 2px dashed #C9A08E;
       border-radius: 50%;
       display: flex;
@@ -86,295 +173,567 @@
       justify-content: center;
       color: #B57F6D;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      transform: rotate(10deg);
+      transform: rotate(8deg);
       text-transform: uppercase;
-      line-height: 1.2;
-    }
-
-    /* 統計小標籤列 */
-    .stats-bar {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 18px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 13px;
-    }
-    .stat-pill {
-      background: #FFFDF8;
-      border: 1px solid #E5D7C7;
-      padding: 5px 16px;
-      border-radius: 999px;
-      color: #6D5C4F;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-    }
-
-    /* 手帳主卡片網格 (Grid) */
-    .deck-grid {
-      width: 100%;
-      max-width: 980px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 36px;
-      margin-top: 20px;
-    }
-
-    /* 拍立得手帳卡片 */
-    .deck-card {
-      background: #FFFFFF;
-      border: 1px solid #ECE3D4;
-      border-radius: 6px;
-      padding: 20px 20px 32px 20px;
-      box-shadow: 0 12px 28px rgba(110, 85, 60, 0.1);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .deck-card:nth-child(even) {
-      transform: rotate(1.2deg);
-    }
-    .deck-card:nth-child(odd) {
-      transform: rotate(-1.2deg);
-    }
-
-    .deck-card:hover {
-      transform: translateY(-8px) scale(1.02) rotate(0deg) !important;
-      box-shadow: 0 20px 40px rgba(140, 90, 70, 0.18);
-      border-color: #DFCAA7;
-    }
-
-    /* 頂部紙膠帶圖樣 */
-    .card-tape {
-      position: absolute;
-      top: -14px;
-      left: 36%;
-      width: 90px;
-      height: 24px;
-      background: rgba(235, 215, 185, 0.75);
-      backdrop-filter: blur(2px);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      transform: rotate(2deg);
-      border-radius: 1px;
-    }
-
-    /* 卡片封面相片區 */
-    .card-preview {
-      background: linear-gradient(135deg, #FDF2F0 0%, #F6E4D9 100%);
-      border-radius: 4px;
-      aspect-ratio: 16 / 9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      line-height: 1.25;
       text-align: center;
-      padding: 24px;
-      margin-bottom: 20px;
+    }
+
+    /* 拍立得照片卡片 (Polaroid Card) */
+    .polaroid {
+      background: #FFFFFF;
+      padding: 14px 14px 28px 14px;
+      border-radius: 4px;
+      box-shadow: 0 10px 24px rgba(100, 75, 55, 0.12);
+      border: 1px solid #EFEAE1;
       position: relative;
-      border: 1px dashed rgba(200, 160, 140, 0.4);
+      transition: transform 0.3s ease;
+    }
+    .polaroid:hover {
+      transform: scale(1.02) rotate(-1deg);
     }
 
-    .card-badge {
+    .polaroid-tape-pin {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      background: #FFF;
-      color: #9A5046;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 999px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      top: -12px;
+      left: 32%;
+      width: 80px;
+      height: 22px;
+      background: rgba(235, 215, 185, 0.75);
+      backdrop-filter: blur(1px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      transform: rotate(3deg);
     }
 
-    .card-preview-icon {
-      font-size: 40px;
-      margin-bottom: 8px;
-    }
-
-    .card-preview-h2 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #5C3230;
-      line-height: 1.4;
-    }
-
-    /* 卡片內容區 */
-    .card-body {
-      padding: 4px 6px;
-      flex-grow: 1;
+    .polaroid-inner {
+      background: linear-gradient(135deg, #FDF0EE 0%, #F8E2D6 100%);
+      aspect-ratio: 4 / 3;
+      border-radius: 2px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
+      color: #7A4F47;
+      padding: 16px;
+      text-align: center;
     }
 
-    .card-desc {
+    .polaroid-caption {
+      font-family: 'Marck Script', cursive;
+      font-size: 21px;
+      color: #6B3E39;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* 日記隨筆便利貼 (Sticky Note) */
+    .sticky-box {
+      background: #FFFDF8;
+      padding: 24px 26px;
+      box-shadow: 0 8px 22px rgba(100, 80, 60, 0.08);
+      border-left: 5px solid #EAA49B;
+      border-radius: 0 16px 16px 0;
+      position: relative;
+    }
+
+    .sticky-box h3 {
+      font-size: 20px;
+      color: #8C473E;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sticky-box ul {
+      list-style: none;
+      font-size: 15px;
+      line-height: 1.85;
+      color: #55483D;
+    }
+
+    .sticky-box li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 6px;
+    }
+    .sticky-box li::before {
+      content: '♡';
+      position: absolute;
+      left: 0;
+      color: #E2938A;
+      font-weight: bold;
+    }
+
+    /* 卡片與數值膠囊 */
+    .pill-highlight {
+      display: inline-block;
+      background: #FCEBEA;
+      color: #B24E43;
+      padding: 2px 10px;
+      border-radius: 8px;
+      font-weight: 700;
       font-size: 14px;
-      color: #63554A;
-      line-height: 1.7;
-      margin-bottom: 16px;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      border: 1px dashed #E5A8A0;
     }
 
-    .card-meta {
+    /* 底部導覽列 (Bottom Nav) */
+    .deck-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding-top: 14px;
-      border-top: 1px dashed #EAE0D2;
+      border-top: 1px dashed #E5D7C7;
+      margin-top: 16px;
+    }
+
+    .page-indicator {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 12px;
-      color: #8C7C6D;
+      font-size: 14px;
+      font-weight: 600;
+      color: #8A7B6D;
+      letter-spacing: 1px;
     }
 
-    .card-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 700;
-      color: #9A5046;
-      font-size: 13px;
-      background: #FCECE9;
-      padding: 6px 14px;
+    .nav-btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      background: #FFFFFF;
+      border: 1px solid #D9CBBD;
+      padding: 6px 16px;
       border-radius: 999px;
-      transition: background 0.2s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #5D5044;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
-    .deck-card:hover .card-cta {
-      background: #F8D8D3;
+    .btn-nav:hover {
+      background: #F7EFE6;
+      border-color: #B59E89;
     }
 
-    /* 底部收納備忘小紙條 */
-    .portal-footer {
-      width: 100%;
-      max-width: 980px;
-      margin-top: 60px;
-      background: #FFFDF8;
-      border: 1px solid #E5D7C7;
-      border-left: 6px solid #E2938A;
-      border-radius: 0 16px 16px 0;
-      padding: 22px 28px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    /* 講者備忘錄抽屜 (Speaker Notes Drawer) */
+    .notes-drawer {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(255, 253, 248, 0.96);
+      backdrop-filter: blur(10px);
+      border-top: 2px solid #E2A79D;
+      padding: 18px 36px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.1);
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .notes-drawer.open {
+      transform: translateY(0);
+    }
+    .notes-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #B24E43;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 13px;
-      color: #6A5D52;
     }
-
-    .footer-links a {
-      color: #8C473E;
-      text-decoration: none;
-      font-weight: 600;
-      margin-left: 16px;
-      padding-bottom: 2px;
-      border-bottom: 1px dashed #E2938A;
-    }
-    .footer-links a:hover {
-      color: #552F2D;
-    }
-
-    @media (max-width: 600px) {
-      .stamp-badge { display: none; }
-      .deck-grid { grid-template-columns: 1fr; }
-      .portal-footer { flex-direction: column; gap: 12px; text-align: center; }
-      .footer-links a { margin: 0 8px; }
+    .notes-content {
+      font-size: 14px;
+      color: #4C4035;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
 
-  <!-- 手帳封面標題 -->
-  <header class="portal-header">
-    <div class="stamp-badge">
-      DEEPSPACE<br>ARCHIVE<br>★ 2026 ★
+  <!-- 頂部資訊列 -->
+  <div class="deck-topbar">
+    <div class="deck-badge">
+      <span>🎀</span> 少女手帳 · 《戀與深空》玩法心動全景
     </div>
-    
-    <div class="washi-title-wrap">
-      <h1 class="portal-h1">戀與深空 · 心動手帳簡報集</h1>
+    <div class="deck-controls-hint">
+      <span>切頁：<span class="key-tag">←</span> <span class="key-tag">→</span> 或 <span class="key-tag">Space</span></span>
+      <span>全螢幕：<span class="key-tag">F</span></span>
+      <span>講者備忘：<span class="key-tag">S</span></span>
     </div>
-    
-    <p class="portal-desc">
-      基於 Karpathy LLM Wiki 知識庫提煉 ✦ 典雅少女手帳與拍立得拼貼風簡報展示中心
-    </p>
+  </div>
 
-    <div class="stats-bar">
-      <div class="stat-pill">🎀 視覺風格：少女手帳 / 拍立得拼貼風</div>
-      <div class="stat-pill">📚 知識庫來源：Wiki 客觀知識層 (100% 條目考據)</div>
-      <div class="stat-pill">✨ 支援：KaTeX 公式 ✦ 全螢幕播放 (F) ✦ 講者備忘 (S)</div>
-    </div>
-  </header>
+  <!-- 簡報主舞台 -->
+  <div class="deck-viewport" id="viewport">
 
-  <!-- 簡報卡片網格 -->
-  <main class="deck-grid">
-
-    <!-- 卡片 1：男主介紹簡報 (全新上線) -->
-    <a href="./presentation/戀與深空男主介紹/index.html" class="deck-card">
-      <div class="card-tape" style="background: rgba(245, 205, 215, 0.75);"></div>
-      
-      <div class="card-preview" style="background: linear-gradient(135deg, #FFF3F0 0%, #FCE8E2 100%);">
-        <span class="card-badge" style="color: #B24E43;">NEW · 男主特輯</span>
-        <div class="card-preview-icon">✨ 💌 🗡️</div>
-        <div class="card-preview-h2">《戀與深空》五大男主心動檔案</div>
-      </div>
-
-      <div class="card-body">
-        <p class="card-desc">
-          完全依據 Wiki 現有條目提煉！沈星回（光）、黎深（冰）、祁煜（火）、秦徹（能量）、夏以晝（引力）的詳細身分檔案、外貌身高數值、Evol 超能力特性與心動名台詞考據。
-        </p>
-
-        <div class="card-meta">
-          <span>📅 2026-11-13 產出</span>
-          <span class="card-cta">翻開角色手帳 →</span>
+    <!-- ==================== Slide 1：封面手札 ==================== -->
+    <div class="slide active" data-notes="各位同好大家好！今天我們要帶大家翻開這本《戀與深空》玩法手帳。很多剛入坑的朋友以為這只是一款純戀愛聊天手遊，但實際上它擁有非常硬核的 3D 動作系統和卡牌構築深度。今天就讓我們從戰鬥到日常陪伴，一步步解鎖臨空市的冒險樂趣！">
+      <div class="washi-header">
+        <div class="washi-tape">
+          <h1 class="slide-h1">戀與深空 · 獵人玩法心動手帳</h1>
+        </div>
+        <div class="stamp-badge">
+          DEEPSPACE<br>HUNTER<br>★ 2026 ★
         </div>
       </div>
-    </a>
 
-    <!-- 卡片 2：玩法介紹簡報 -->
-    <a href="./presentation/戀與深空玩法介紹/index.html" class="deck-card">
-      <div class="card-tape"></div>
-      
-      <div class="card-preview">
-        <span class="card-badge">HOT · 玩法解析</span>
-        <div class="card-preview-icon">⚔️ 🔮 📸</div>
-        <div class="card-preview-h2">《戀與深空》玩法心動全景手帳</div>
-      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; flex-grow: 1;">
+        <!-- 左側拍立得照片 -->
+        <div class="polaroid" style="transform: rotate(-3deg);">
+          <div class="polaroid-tape-pin"></div>
+          <div class="polaroid-inner" style="aspect-ratio: 16/10;">
+            <span style="font-size: 44px; margin-bottom: 10px;">🌌 ⚔️ 💌</span>
+            <div style="font-weight: 700; font-size: 19px; color: #5C3230;">近未來 3D 動作與浪漫戀愛全景</div>
+            <div style="font-size: 14px; margin-top: 6px; color: #8C5B52;">與他並肩而立，讓愛觸手可及</div>
+          </div>
+          <div class="polaroid-caption">To my dearest hunter partner.</div>
+        </div>
 
-      <div class="card-body">
-        <p class="card-desc">
-          深入解析近未來 3D 即時動作戰鬥、能量點與誓約技循環、極限閃避刷新協助技 CD、2+4 思念卡組編隊法則與日常陪伴生活（影棚、喵喵牌、伴讀計時）。
-        </p>
-
-        <div class="card-meta">
-          <span>📅 2026-11-13 產出</span>
-          <span class="card-cta">翻開玩法手帳 →</span>
+        <!-- 右側手帳便簽 -->
+        <div class="sticky-box" style="transform: rotate(2deg);">
+          <h3>今日翻開手札要點</h3>
+          <ul>
+            <li><strong>超沉浸 3D 戰鬥</strong>：即時動作對決、能量點分配與極限閃避。</li>
+            <li><strong>獨創思念卡組</strong>：2 日冕 + 4 月暉編隊法則與芯核體系。</li>
+            <li><strong>甜蜜生活陪伴</strong>：自由影棚、趣味喵喵牌與日常溫暖伴讀。</li>
+          </ul>
+          <div style="margin-top: 16px; font-size: 13px; color: #8F7D6E; font-style: italic;">
+            ✦ 記錄人：同好考據組 · 基於 Wiki 現有知識庫整理
+          </div>
         </div>
       </div>
-    </a>
 
-  </main>
-
-  <!-- 底部筆記與備忘說明 -->
-  <footer class="portal-footer">
-    <div>
-      <strong>✦ 知識庫維護手札</strong>：目前已收錄「男主特輯」與「玩法解析」兩本少女手帳簡報！
+      <div class="deck-footer">
+        <div class="page-indicator">01 / 06</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
     </div>
-    <div class="footer-links">
-      <a href="./notes/2026-11-13-戀與深空男主介紹.md">📖 男主研究筆記</a>
-      <a href="./notes/2026-11-13-戀與深空玩法介紹.md">📖 玩法研究筆記</a>
-      <a href="./wiki/index.md">🗂️ Wiki 總目錄</a>
-    </div>
-  </footer>
 
+    <!-- ==================== Slide 2：三大核心板塊 ==================== -->
+    <div class="slide" data-notes="我們把整款遊戲的精華歸納為這三大板塊：動作戰鬥帶給你並肩作戰的熱血與緊密感；思念卡牌滿足數值與策略搭配；而生活陪伴則給予最長情溫暖的陪伴反饋。">
+      <div class="washi-header">
+        <div class="washi-tape tape-green">
+          <h2 class="slide-h1">01. 玩法全貌：臨空市獵人的冒險日常</h2>
+        </div>
+        <div class="stamp-badge">
+          THREE<br>PILLARS<br>OVERVIEW
+        </div>
+      </div>
+
+      <!-- 三張卡片手帳拼貼 -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-grow: 1; align-items: stretch;">
+        <div class="sticky-box" style="border-left-color: #E2938A; transform: rotate(-1.5deg);">
+          <h3>⚔️ 3D 動作戰鬥</h3>
+          <ul>
+            <li>告別傳統數值紙片人對撞</li>
+            <li>第一人稱視角演出沉浸感</li>
+            <li>雙人連攜、走位與閃避</li>
+          </ul>
+        </div>
+
+        <div class="sticky-box" style="border-left-color: #C5A059; transform: translateY(-6px);">
+          <h3>🔮 思念卡牌養成</h3>
+          <ul>
+            <li>「2 日冕 + 4 月暉」卡組</li>
+            <li>同一男主專屬隊容限制</li>
+            <li>等級、星級突破與芯核裝備</li>
+          </ul>
+        </div>
+
+        <div class="sticky-box" style="border-left-color: #A78BFA; transform: rotate(1.5deg);">
+          <h3>📸 浪漫生活陪伴</h3>
+          <ul>
+            <li>個人照片 AI 智能捏臉系統</li>
+            <li>影棚合影、喵喵牌與抓娃娃</li>
+            <li>全天候工作、學習與運動陪伴</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">02 / 06</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 3：能量點與雙人誓約 ==================== -->
+    <div class="slide" data-notes="在戰鬥中，能量點是每一位獵人必須精打細算的資源。切記不要盲目消耗，通常在關鍵時刻留 2 點能量釋放共鳴技，能起到扭轉戰局的效果。而集滿時釋放的誓約技，更是視聽感受的極致享受。">
+      <div class="washi-header">
+        <div class="washi-tape tape-apricot">
+          <h2 class="slide-h1">02. 戰場交鋒：掌握能量節奏與誓約終結</h2>
+        </div>
+        <div class="stamp-badge">
+          COMBAT<br>SKILLS<br>✦ FLOW ✦
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; align-items: center; flex-grow: 1;">
+        <!-- 左側便利貼 -->
+        <div class="sticky-box">
+          <h3>能量點管控與技能階梯</h3>
+          <ul>
+            <li><span class="pill-highlight">主動技 · 耗 1 點</span>：基礎常態循環，壓制小怪節奏。</li>
+            <li><span class="pill-highlight">共鳴技 · 耗 2 點</span>：與搭檔 Evol 引發強力共鳴，造成爆發打擊。</li>
+            <li><span class="pill-highlight">誓約技 (Ardent Oath)</span>：長時間戰鬥積累充能，釋放華麗雙人大招動畫！</li>
+          </ul>
+        </div>
+
+        <!-- 右側拍立得與公式卡片 -->
+        <div class="polaroid" style="transform: rotate(2deg);">
+          <div class="polaroid-tape-pin"></div>
+          <div style="background: #FFFDF9; border: 1px dashed #D9C3B0; border-radius: 8px; padding: 18px 14px; text-align: center;">
+            <div style="font-size: 13px; color: #8A6E59; font-weight: 700; margin-bottom: 8px;">戰鬥循環數值策略模型</div>
+            <div style="font-size: 15px; color: #5C3230; margin: 8px 0;">
+              $$ \text{Combat Cycle} = 1\text{pt (主動)} \rightarrow 2\text{pts (共鳴)} \rightarrow \text{Oath (誓約)} $$
+            </div>
+            <div style="font-size: 12px; color: #A67C6D;">雙人共鳴可達成最高輸出效益</div>
+          </div>
+          <div class="polaroid-caption">Resonance in the deep space.</div>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">03 / 06</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 4：極限閃避與冷卻刷新 ==================== -->
+    <div class="slide" data-notes="這是深空戰鬥機制中最讓人上癮的地方！閃避不再只是單純防守，而是進攻的跳板。抓準敵人的抬手瞬間翻滾，刷新男主的協助技，就能打出無縫銜接的爽快連招。">
+      <div class="washi-header">
+        <div class="washi-tape">
+          <h2 class="slide-h1">03. 靈動身法：極限閃避與即刻刷新 CD</h2>
+        </div>
+        <div class="stamp-badge">
+          DODGE<br>& REFRESH<br>★ REWARD ★
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; flex-grow: 1;">
+        <div class="polaroid" style="transform: rotate(-2.5deg);">
+          <div class="polaroid-tape-pin"></div>
+          <div class="polaroid-inner">
+            <span style="font-size: 38px; margin-bottom: 8px;">⚡ 🏃‍♀️ 🛡️</span>
+            <div style="font-size: 18px; font-weight: 700; color: #643831;">攻防一體的節奏轉換</div>
+            <div style="font-size: 14px; margin-top: 6px; color: #8F5E54;">閃避不是逃跑，而是反擊的序章！</div>
+          </div>
+          <div class="polaroid-caption">Perfect timing, perfect synergy.</div>
+        </div>
+
+        <div class="sticky-box" style="border-left-color: #E2A79D; transform: rotate(1deg);">
+          <h3>極限閃避的雙重核心獎勵</h3>
+          <ul>
+            <li><strong>規避致命打擊</strong>：完美翻滾判定，免除怪物高額傷害。</li>
+            <li><strong>男主協助技強化</strong>：使下一次男主協助技的威力與效果大幅提升！</li>
+            <li><strong>立即重置冷卻</strong>：<span class="pill-highlight">刷新協助技 CD</span>，無縫打出反擊連招！</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">04 / 06</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 5：思念卡組法則與芯核 ==================== -->
+    <div class="slide" data-notes="在配卡時請特別注意「同男主原則」，你不能把沈星回和黎深的卡混在一起打同一個關卡。另外 2 張日冕位是非常關鍵的，它決定了你們在戰場上的作戰風格。">
+      <div class="washi-header">
+        <div class="washi-tape tape-purple">
+          <h2 class="slide-h1">04. 思念構築：2+4 編隊法則與芯核</h2>
+        </div>
+        <div class="stamp-badge">
+          SOLAR &<br>LUNAR<br>✦ CARDS ✦
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; align-items: center; flex-grow: 1;">
+        <div class="sticky-box">
+          <h3>卡組編隊結構與限制</h3>
+          <ul>
+            <li><strong>日冕位 (Solar) × 2 張</strong>：核心靈魂，決定主動技能態與套裝天賦。</li>
+            <li><strong>月暉位 (Lunar) × 4 張</strong>：數值骨幹，提供生命、攻擊、防禦高額基底。</li>
+            <li><strong>同男主限制原則</strong>：6 張思念必須為**相同男主**，不可跨男主混編！</li>
+            <li><strong>芯核佩戴</strong>：為思念佩戴晶石，量身定制深度詞條屬性。</li>
+          </ul>
+        </div>
+
+        <div class="polaroid" style="transform: rotate(2deg);">
+          <div class="polaroid-tape-pin"></div>
+          <div style="background: #FDF9F3; border: 1px solid #E5D5C5; border-radius: 8px; padding: 20px; text-align: center;">
+            <div style="font-weight: 700; color: #6D3D35; font-size: 16px; margin-bottom: 10px;">卡組星譜公式</div>
+            <div style="font-size: 15px; color: #443B33; margin-bottom: 12px;">
+              $$ \text{Deck} = 2\text{ Solar} + 4\text{ Lunar} $$
+            </div>
+            <div style="background: #F8ECE7; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #9A5046;">
+              🔒 僅限單一男主出戰 (沈星回 / 黎深 / 祁煜 / 秦徹 / 夏以晝)
+            </div>
+          </div>
+          <div class="polaroid-caption">Heartbeat aligned in stars.</div>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">05 / 06</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 6：浪漫生活陪伴 ==================== -->
+    <div class="slide" data-notes="最後是很多同好最喜歡的休閒系統！影棚的大頭貼可以自由調整姿勢表情，非常出片；而日常伴讀功能更是陪伴感拉滿，不管是寫作業還是工作，抬頭看到他都在身邊，真的非常治癒。">
+      <div class="washi-header">
+        <div class="washi-tape">
+          <h2 class="slide-h1">05. 心動日常：影棚、小遊戲與日常伴讀</h2>
+        </div>
+        <div class="stamp-badge">
+          SWEET<br>DAILY<br>♥ LIFE ♥
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: center; flex-grow: 1;">
+        <!-- 拍立得 1：影棚 -->
+        <div class="polaroid" style="transform: rotate(-3deg);">
+          <div class="polaroid-inner" style="aspect-ratio: 1/1;">
+            <span style="font-size: 36px; margin-bottom: 6px;">📷</span>
+            <div style="font-weight: 700; font-size: 16px;">影棚合影</div>
+            <div style="font-size: 12px; color: #8C5B52; margin-top: 4px;">自由布景與定格快門</div>
+          </div>
+          <div class="polaroid-caption">Exclusive Studio Photo</div>
+        </div>
+
+        <!-- 拍立得 2：喵喵牌與娃娃機 -->
+        <div class="polaroid" style="transform: translateY(-8px);">
+          <div class="polaroid-inner" style="aspect-ratio: 1/1;">
+            <span style="font-size: 36px; margin-bottom: 6px;">🐱 🧸</span>
+            <div style="font-weight: 700; font-size: 16px;">休閒小遊戲</div>
+            <div style="font-size: 12px; color: #8C5B52; margin-top: 4px;">喵喵牌博弈 & 抓娃娃</div>
+          </div>
+          <div class="polaroid-caption">Playful Match Time</div>
+        </div>
+
+        <!-- 拍立得 3：伴讀計時器 -->
+        <div class="polaroid" style="transform: rotate(3deg);">
+          <div class="polaroid-inner" style="aspect-ratio: 1/1;">
+            <span style="font-size: 36px; margin-bottom: 6px;">⏳ ☕</span>
+            <div style="font-weight: 700; font-size: 16px;">全天候陪伴</div>
+            <div style="font-size: 12px; color: #8C5B52; margin-top: 4px;">工作、學習與運動計時</div>
+          </div>
+          <div class="polaroid-caption">Always by your side</div>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">06 / 06</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="goToSlide(0)">↺ 回首頁</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 演講者備忘錄抽屜 (按 S 鍵開啟/收合) -->
+    <div class="notes-drawer" id="notesDrawer">
+      <div class="notes-title">
+        <span>講者備忘錄 (Speaker Notes)</span>
+        <span style="cursor: pointer;" onclick="toggleNotes()">✕ 關閉</span>
+      </div>
+      <div class="notes-content" id="notesContent">
+        備忘錄內容載入中...
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const notesDrawer = document.getElementById('notesDrawer');
+    const notesContent = document.getElementById('notesContent');
+
+    function updateSlide() {
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentSlide);
+      });
+      // 更新當前頁面的講者備忘錄
+      const currentNotes = slides[currentSlide].getAttribute('data-notes') || '本頁尚無備忘錄。';
+      notesContent.innerText = currentNotes;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < totalSlides) {
+        currentSlide = index;
+        updateSlide();
+      }
+    }
+
+    function toggleNotes() {
+      notesDrawer.classList.toggle('open');
+    }
+
+    // 鍵盤快捷鍵監聽
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 's' || e.key === 'S') {
+        toggleNotes();
+      } else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen();
+        }
+      }
+    });
+
+    // 初始化第一頁的講者備忘錄
+    updateSlide();
+  </script>
 </body>
 </html>
