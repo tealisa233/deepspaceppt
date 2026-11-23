@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>《戀與深空》五大男主心動檔案手帳</title>
+  <!-- Google Fonts: 襯線字體、手寫體與乾淨字型 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Noto+Serif+TC:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- KaTeX 數學公式支援 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #F4EFE6 url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23E5DDD0' fill-opacity='0.45' fill-rule='evenodd'%3E%3Cpath d='M0 50L50 0H25L0 25M50 50V25L25 50'/%3E%3C/g%3E%3C/svg%3E");
+      color: #4A4036;
+      font-family: 'Noto Serif TC', serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    /* 頂部手帳小頂列 */
+    .deck-topbar {
+      width: 100%;
+      max-width: 1060px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 10px;
+    }
+
+    .deck-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      background: #EED7CF;
+      color: #8C473E;
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(140,71,62,0.1);
+    }
+
+    .deck-controls-hint {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      color: #85786C;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .key-tag {
+      background: #FFFFFF;
+      padding: 2px 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      font-weight: 700;
+      color: #443B33;
+    }
+
+    /* 主舞台 16:9 比例大手帳 */
+    .deck-viewport {
+      width: 100%;
+      max-width: 1060px;
+      aspect-ratio: 16 / 9;
+      background: #FFFDF9;
+      border: 2px solid #EADBCC;
+      border-radius: 28px;
+      box-shadow: 0 24px 60px rgba(110, 85, 60, 0.16), 0 4px 12px rgba(0,0,0,0.04);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .deck-viewport::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 14px;
+      background: linear-gradient(to right, rgba(0,0,0,0.04), transparent);
+      pointer-events: none;
+    }
+
+    /* 逐頁 Slide */
+    .slide {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      padding: 44px 56px 40px 56px;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: scale(0.985);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* 紙膠帶標題 */
+    .washi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .washi-tape {
+      position: relative;
+      background: #F3C3C0;
+      padding: 8px 30px;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transform: rotate(-1deg);
+      border-radius: 1px;
+    }
+    .washi-tape.tape-blue { background: #CFE2FE; }
+    .washi-tape.tape-coral { background: #FFD2C2; }
+    .washi-tape.tape-dark { background: #E2D2DF; }
+    .washi-tape.tape-sky { background: #D0EBF5; }
+
+    .washi-tape::before, .washi-tape::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 10px;
+      background: inherit;
+    }
+    .washi-tape::before { left: -6px; clip-path: polygon(100% 0, 0 50%, 100% 100%); }
+    .washi-tape::after { right: -6px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+
+    .slide-h1 {
+      font-size: 27px;
+      font-weight: 700;
+      color: #552F2D;
+      letter-spacing: 0.5px;
+    }
+
+    /* 蓋印戳章 */
+    .stamp-badge {
+      width: 68px;
+      height: 68px;
+      border: 2px dashed #C9A08E;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #B57F6D;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      transform: rotate(8deg);
+      text-transform: uppercase;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    /* 拍立得照片卡片 */
+    .polaroid {
+      background: #FFFFFF;
+      padding: 14px 14px 26px 14px;
+      border-radius: 4px;
+      box-shadow: 0 10px 24px rgba(100, 75, 55, 0.12);
+      border: 1px solid #EFEAE1;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+    .polaroid:hover {
+      transform: scale(1.02) rotate(-1deg);
+    }
+
+    .polaroid-tape-pin {
+      position: absolute;
+      top: -12px;
+      left: 32%;
+      width: 80px;
+      height: 22px;
+      background: rgba(235, 215, 185, 0.75);
+      backdrop-filter: blur(1px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      transform: rotate(3deg);
+    }
+
+    .polaroid-inner {
+      aspect-ratio: 4 / 3;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .polaroid-caption {
+      font-family: 'Marck Script', cursive;
+      font-size: 21px;
+      color: #6B3E39;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* 日記隨筆便利貼 */
+    .sticky-box {
+      background: #FFFDF8;
+      padding: 24px 26px;
+      box-shadow: 0 8px 22px rgba(100, 80, 60, 0.08);
+      border-left: 5px solid #EAA49B;
+      border-radius: 0 16px 16px 0;
+      position: relative;
+    }
+
+    .sticky-box h3 {
+      font-size: 20px;
+      color: #8C473E;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quote-box {
+      font-style: italic;
+      color: #7D4942;
+      font-size: 18px;
+      line-height: 1.5;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #EAD5C5;
+    }
+
+    .meta-tags-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+    }
+
+    .tag-item {
+      background: #FDF4F0;
+      padding: 6px 12px;
+      border-radius: 8px;
+      color: #6B4E45;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tag-item strong {
+      color: #9A463B;
+    }
+
+    .sticky-box ul {
+      list-style: none;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #55483D;
+    }
+
+    .sticky-box li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 4px;
+    }
+    .sticky-box li::before {
+      content: '✦';
+      position: absolute;
+      left: 0;
+      color: #E2938A;
+      font-size: 12px;
+    }
+
+    /* 底部導覽列 */
+    .deck-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px dashed #E5D7C7;
+      margin-top: 16px;
+    }
+
+    .page-indicator {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #8A7B6D;
+      letter-spacing: 1px;
+    }
+
+    .nav-btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      background: #FFFFFF;
+      border: 1px solid #D9CBBD;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #5D5044;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-nav:hover {
+      background: #F7EFE6;
+      border-color: #B59E89;
+    }
+
+    /* 講者備忘錄抽屜 */
+    .notes-drawer {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(255, 253, 248, 0.96);
+      backdrop-filter: blur(10px);
+      border-top: 2px solid #E2A79D;
+      padding: 18px 36px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,0.1);
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .notes-drawer.open {
+      transform: translateY(0);
+    }
+    .notes-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #B24E43;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .notes-content {
+      font-size: 14px;
+      color: #4C4035;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部資訊列 -->
+  <div class="deck-topbar">
+    <div class="deck-badge">
+      <span>💌</span> 少女手帳 · 《戀與深空》五大男主心動檔案
+    </div>
+    <div class="deck-controls-hint">
+      <span>切頁：<span class="key-tag">←</span> <span class="key-tag">→</span> 或 <span class="key-tag">Space</span></span>
+      <span>全螢幕：<span class="key-tag">F</span></span>
+      <span>講者備忘：<span class="key-tag">S</span></span>
+    </div>
+  </div>
+
+  <!-- 簡報主舞台 -->
+  <div class="deck-viewport" id="viewport">
+
+    <!-- ==================== Slide 1：封面手札 ==================== -->
+    <div class="slide active" data-notes="各位同好大家好！在《戀與深空》宏大的近未來宇宙中，最讓人牽腸掛肚的莫過於五位個性鮮明、魅力各異的男主角。今天我們將翻開這本角色手帳，從身分、外貌特質、超能力 Evol 到經典台詞，全面重溫與他們的每一次心跳瞬間！">
+      <div class="washi-header">
+        <div class="washi-tape">
+          <h1 class="slide-h1">戀與深空 · 五大男主角心動手帳</h1>
+        </div>
+        <div class="stamp-badge">
+          HEARTBEAT<br>ARCHIVE<br>★ 2026 ★
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; flex-grow: 1;">
+        <!-- 左側拍立得合照 -->
+        <div class="polaroid" style="transform: rotate(-3deg);">
+          <div class="polaroid-tape-pin"></div>
+          <div class="polaroid-inner" style="background: linear-gradient(135deg, #FFF3F0 0%, #FBE6DA 100%);">
+            <span style="font-size: 42px; margin-bottom: 8px;">✨ 🌌 💖</span>
+            <div style="font-weight: 700; font-size: 18px; color: #5C3230;">臨空市的五道命定微光</div>
+            <div style="font-size: 13px; margin-top: 6px; color: #8C5B52;">跨越光年與維度，與你心意相通</div>
+          </div>
+          <div class="polaroid-caption">Five destinies, one heartbeat.</div>
+        </div>
+
+        <!-- 右側手帳便箋 -->
+        <div class="sticky-box" style="transform: rotate(2deg);">
+          <h3>角色手帳收錄名錄</h3>
+          <ul>
+            <li><strong>沈星回</strong>：神秘深空獵人 · 光之破曉</li>
+            <li><strong>黎深</strong>：心臟外科名醫 · 冰雪融溫</li>
+            <li><strong>祁煜</strong>：天才藝術畫家 · 海底烈焰</li>
+            <li><strong>秦徹</strong>：暗點組織領袖 · 能量掌控</li>
+            <li><strong>夏以晝</strong>：遠空艦隊執艦官 · 引力宿命</li>
+          </ul>
+          <div style="margin-top: 14px; font-size: 12px; color: #8F7D6E; font-style: italic;">
+            ✦ 依據 Wiki 現存條目提煉 · 記載身分、外觀數值與超能力 Evol
+          </div>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">01 / 07</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 2：沈星回 ==================== -->
+    <div class="slide" data-notes="沈星回給人的第一印象總是特別溫和、甚至有點呆萌，但他的真實身分與年齡在官方檔案中全部是『未知』。戰場上他操縱的光之 Evol 具備極強穿透力，那句『我的光芒只朝向你在的地方』，道盡了他對主角無言卻堅定至極的深情。">
+      <div class="washi-header">
+        <div class="washi-tape">
+          <h2 class="slide-h1">01. 沈星回 (Xavier) · 破曉之芒</h2>
+        </div>
+        <div class="stamp-badge">
+          LIGHT<br>EVOL<br>★ NO.01 ★
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 36px; align-items: center; flex-grow: 1;">
+        <div class="polaroid" style="transform: rotate(-2.5deg);">
+          <div class="polaroid-tape-pin"></div>
+          <div class="polaroid-inner" style="background: linear-gradient(135deg, #FEFBF3 0%, #FDF3DB 100%);">
+            <span style="font-size: 40px; margin-bottom: 8px;">🗡️ 🌟 🐰</span>
+            <div style="font-weight: 700; font-size: 18px; color: #6D5032;">神秘的持劍守護者</div>
+            <div style="font-size: 13px; color: #9A7B58; margin-top: 4px;">光芒穿透深空黑夜</div>
+          </div>
+          <div class="polaroid-caption">My light always shines for you.</div>
+        </div>
+
+        <div class="sticky-box" style="border-left-color: #E6B86A;">
+          <div class="quote-box">
+            「我的光芒，只朝向你在的地方。」
+          </div>
+          <div class="meta-tags-grid">
+            <div class="tag-item"><strong>身分</strong>：深空獵人</div>
+            <div class="tag-item"><strong>Evol</strong>：光</div>
+            <div class="tag-item"><strong>年齡</strong>：未知</div>
+            <div class="tag-item"><strong>生日 / 身高</strong>：10.16 / 185cm</div>
+          </div>
+          <ul>
+            <li>平時神情慵懶放鬆，喜歡甜食，偶爾會在暖陽下睡著。</li>
+            <li>戰場上是俐落迅捷的光系戰士，具備極致的高頻穿透輸出。</li>
+            <li>與玩家同為深空獵人，在異度空間中永遠給予最即時的掩護。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">02 / 07</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 3：黎深 ==================== -->
+    <div class="slide" data-notes="黎深是典型『外冷內熱』的極致代表。身為心臟外科權威，他見證過無數生死，始終冷靜克制。但當主角靠近時，他操縱冰霜的手卻總是帶著最溫暖的牽掛。他的存在就像冬日裡的圍巾，給人百分之百的安全感。">
+      <div class="washi-header">
+        <div class="washi-tape tape-blue">
+          <h2 class="slide-h1">02. 黎深 (Zayne) · 冰雪微溫</h2>
+        </div>
+        <div class="stamp-badge">
+          ICE<br>SURGEON<br>❄ NO.02 ❄
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 36px; align-items: center; flex-grow: 1;">
+        <div class="polaroid" style="transform: rotate(2deg);">
+          <div class="polaroid-tape-pin" style="background: rgba(200, 220, 245, 0.75);"></div>
+          <div class="polaroid-inner" style="background: linear-gradient(135deg, #F0F6FD 0%, #DCE9F8 100%);">
+            <span style="font-size: 40px; margin-bottom: 8px;">❄️ 🩺 ⛄</span>
+            <div style="font-weight: 700; font-size: 18px; color: #355375;">嚴謹克制的心臟權威</div>
+            <div style="font-size: 13px; color: #5B7B9F; margin-top: 4px;">極寒之中跳動的溫熱</div>
+          </div>
+          <div class="polaroid-caption">Ice will melt as you step closer.</div>
+        </div>
+
+        <div class="sticky-box" style="border-left-color: #7DA6CE;">
+          <div class="quote-box">
+            「你再靠近一點，冰雪就要融化了。」
+          </div>
+          <div class="meta-tags-grid">
+            <div class="tag-item"><strong>身分</strong>：心臟外科醫生</div>
+            <div class="tag-item"><strong>Evol</strong>：冰</div>
+            <div class="tag-item"><strong>年齡</strong>：27 歲</div>
+            <div class="tag-item"><strong>生日 / 身高</strong>：9.5 / 186cm</div>
+          </div>
+          <ul>
+            <li>頂尖醫學中心的主力醫生，工作嚴謹專業、態度沉穩內斂。</li>
+            <li>掌控「冰」之 Evol，擅長以凝霜控場，兼具強大防禦轉換能力。</li>
+            <li>看似清冷寡言，實則對主角的心跳與健康無比在意，呵護入微。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">03 / 07</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 4：祁煜 ==================== -->
+    <div class="slide" data-notes="祁煜身上充滿了最迷人的反差！明明是富含海洋意象的天才畫家，掌控的卻是破壞力十足的『火』Evol。他的性格像貓一樣靈動傲嬌，偶爾還會跟主角撒嬌拌嘴，但每一次牽手與對視，眼底都燃燒著跨越時間的深情。">
+      <div class="washi-header">
+        <div class="washi-tape tape-coral">
+          <h2 class="slide-h1">03. 祁煜 (Rafayel) · 深海烈焰</h2>
+        </div>
+        <div class="stamp-badge">
+          FIRE<br>ARTIST<br>🔥 NO.03 🔥
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 36px; align-items: center; flex-grow: 1;">
+        <div class="polaroid" style="transform: rotate(-2deg);">
+          <div class="polaroid-tape-pin" style="background: rgba(255, 210, 200, 0.75);"></div>
+          <div class="polaroid-inner" style="background: linear-gradient(135deg, #FFF0EC 0%, #FED9CE 100%);">
+            <span style="font-size: 40px; margin-bottom: 8px;">🎨 🐟 🔥</span>
+            <div style="font-weight: 700; font-size: 18px; color: #8A4032;">海底燃起火焰的畫家</div>
+            <div style="font-size: 13px; color: #B36858; margin-top: 4px;">浪漫靈動的藝術靈魂</div>
+          </div>
+          <div class="polaroid-caption">Flames burning under the deep sea.</div>
+        </div>
+
+        <div class="sticky-box" style="border-left-color: #E27964;">
+          <div class="quote-box">
+            「你相信，海底也會燃起火焰嗎？」
+          </div>
+          <div class="meta-tags-grid">
+            <div class="tag-item"><strong>身分</strong>：藝術家</div>
+            <div class="tag-item"><strong>Evol</strong>：火</div>
+            <div class="tag-item"><strong>年齡</strong>：24 歲</div>
+            <div class="tag-item"><strong>生日 / 身高</strong>：3.6 / 183cm</div>
+          </div>
+          <ul>
+            <li>筆觸獨具奇幻張力的天才畫家，深受海浪、深海與色彩意象啟發。</li>
+            <li>操縱反差強烈的「火」Evol，戰鬥時打擊感熱烈奔放，爆發力十足。</li>
+            <li>性格傲嬌浪漫、靈動愛鬧，面對主角時總有著道不盡的熱情與依戀。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">04 / 07</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 5：秦徹 ==================== -->
+    <div class="slide" data-notes="秦徹的登場為整個世界觀帶來了完全不同的氛圍。作為暗點的首領，他游走在規矩與秩序之外。他不掩飾野心與欲望，與主角的互動就像兩位高手過招，充滿了勢均力敵的推拉與極致的荷爾蒙張力。">
+      <div class="washi-header">
+        <div class="washi-tape tape-dark">
+          <h2 class="slide-h1">04. 秦徹 (Sylus) · 暗夜支配</h2>
+        </div>
+        <div class="stamp-badge">
+          ENERGY<br>LEADER<br>⚡ NO.04 ⚡
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 36px; align-items: center; flex-grow: 1;">
+        <div class="polaroid" style="transform: rotate(2.5deg);">
+          <div class="polaroid-tape-pin" style="background: rgba(220, 205, 220, 0.75);"></div>
+          <div class="polaroid-inner" style="background: linear-gradient(135deg, #F9F0F6 0%, #E9D5E4 100%);">
+            <span style="font-size: 40px; margin-bottom: 8px;">🦅 👑 ⚡</span>
+            <div style="font-weight: 700; font-size: 18px; color: #5B3252;">灰色地帶的暗點首領</div>
+            <div style="font-size: 13px; color: #87577C; margin-top: 4px;">欲望與掌控的成年人博弈</div>
+          </div>
+          <div class="polaroid-caption">Face your deepest true desires.</div>
+        </div>
+
+        <div class="sticky-box" style="border-left-color: #9C5F8E;">
+          <div class="quote-box">
+            「看清楚了麼？這才是你內心真正的欲望。」
+          </div>
+          <div class="meta-tags-grid">
+            <div class="tag-item"><strong>身分</strong>：暗點組織首領</div>
+            <div class="tag-item"><strong>Evol</strong>：能量操控</div>
+            <div class="tag-item"><strong>年齡</strong>：28 歲</div>
+            <div class="tag-item"><strong>生日 / 身高</strong>：4.18 / 190cm</div>
+          </div>
+          <ul>
+            <li>身高 190 cm 的強勢領袖，執掌地下組織「暗點」，行事果決凌厲。</li>
+            <li>掌握毀滅性的「能量操控」Evol，能隨心所欲調動能量衝擊敵人。</li>
+            <li>與主角保持勢均力敵的張力博弈，直擊本心，荷爾蒙與威懾力兼具。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">05 / 07</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 6：夏以晝 ==================== -->
+    <div class="slide" data-notes="夏以晝是無數同好心中的白月光。他是優秀的戰鬥機飛行員與執艦官，面對浩瀚深空與危險任務從不退縮。他的引力 Evol 就像他對主角的承諾：不管飛行到宇宙的哪一個角落，引力的起點與終點，始終都在你的身邊。">
+      <div class="washi-header">
+        <div class="washi-tape tape-sky">
+          <h2 class="slide-h1">05. 夏以晝 (Caleb) · 宿命引力</h2>
+        </div>
+        <div class="stamp-badge">
+          GRAVITY<br>PILOT<br>✈️ NO.05 ✈️
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 36px; align-items: center; flex-grow: 1;">
+        <div class="polaroid" style="transform: rotate(-2deg);">
+          <div class="polaroid-tape-pin" style="background: rgba(210, 235, 245, 0.75);"></div>
+          <div class="polaroid-inner" style="background: linear-gradient(135deg, #F0F8FD 0%, #DCEFFB 100%);">
+            <span style="font-size: 40px; margin-bottom: 8px;">✈️ 🧭 💫</span>
+            <div style="font-weight: 700; font-size: 18px; color: #2B577A;">遠空艦隊的堅毅執艦官</div>
+            <div style="font-size: 13px; color: #507D9E; margin-top: 4px;">永恆牽引的溫暖港灣</div>
+          </div>
+          <div class="polaroid-caption">Gravity begins and ends with you.</div>
+        </div>
+
+        <div class="sticky-box" style="border-left-color: #5B95BD;">
+          <div class="quote-box">
+            「引力的起點是你，終點也是你。」
+          </div>
+          <div class="meta-tags-grid">
+            <div class="tag-item"><strong>身分</strong>：DAA飛行員/執艦官</div>
+            <div class="tag-item"><strong>Evol</strong>：引力控制</div>
+            <div class="tag-item"><strong>年齡</strong>：25 歲</div>
+            <div class="tag-item"><strong>生日 / 身高</strong>：6.13 / 188cm</div>
+          </div>
+          <ul>
+            <li>空軍精英飛行員兼遠空艦隊執艦官，戰術素養深厚，沉穩值得信賴。</li>
+            <li>操縱無形卻無處不在的「引力控制」，能精確掌控戰場重力與軌跡。</li>
+            <li>與主角擁有刻骨銘心的相伴羈絆，無論航行多遠，心中始終牽繫著你。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">06 / 07</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="nextSlide()">下一頁 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== Slide 7：總結與誓約 ==================== -->
+    <div class="slide" data-notes="總結來說，《戀與深空》的五位男主角不僅在數值和 Evol 屬性上各有定位，更在情感光譜上滿足了每一位獵人的期待。無論你選擇與誰並肩出戰，你們的心跳都將在深空的彼端達成最強大的共振！">
+      <div class="washi-header">
+        <div class="washi-tape">
+          <h2 class="slide-h1">06. 羈絆總結：五色星譜的守護誓約</h2>
+        </div>
+        <div class="stamp-badge">
+          ETERNAL<br>OATH<br>♥ FOREVER ♥
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 32px; align-items: center; flex-grow: 1;">
+        <div class="sticky-box">
+          <h3>五大男主 Evol 與情感光譜速覽</h3>
+          <ul>
+            <li><strong>沈星回 (光)</strong>：破曉穿透黑暗，無聲守候在身旁的純粹之光。</li>
+            <li><strong>黎深 (冰)</strong>：霜雪凍結外界危險，內心為你跳動的極致溫存。</li>
+            <li><strong>祁煜 (火)</strong>：海底燃燒的藝術靈魂，熱烈靈動的浪漫依戀。</li>
+            <li><strong>秦徹 (能量)</strong>：打破常規的暗夜領袖，成年人勢均力敵的強勢博弈。</li>
+            <li><strong>夏以晝 (引力)</strong>：穿越光年的艦隊長空，宿命軌道無法掙脫的牽引。</li>
+          </ul>
+        </div>
+
+        <div class="polaroid" style="transform: rotate(2deg);">
+          <div class="polaroid-tape-pin"></div>
+          <div style="background: #FFFDF9; border: 1px dashed #D9C3B0; border-radius: 8px; padding: 20px 16px; text-align: center;">
+            <div style="font-size: 13px; color: #8A6E59; font-weight: 700; margin-bottom: 8px;">獵人搭檔共振定理</div>
+            <div style="font-size: 15px; color: #5C3230; margin: 8px 0;">
+              $$ \text{Heart Resonance} = \text{Hunter (You)} \times \text{Evol} \rightarrow \text{Oath} $$
+            </div>
+            <div style="font-size: 12px; color: #A67C6D;">在深空彼端，愛意無可替代</div>
+          </div>
+          <div class="polaroid-caption">Where love is within reach.</div>
+        </div>
+      </div>
+
+      <div class="deck-footer">
+        <div class="page-indicator">07 / 07</div>
+        <div class="nav-btn-group">
+          <button class="btn-nav" onclick="prevSlide()">← 上一頁</button>
+          <button class="btn-nav" onclick="toggleNotes()">📝 講者講稿 (S)</button>
+          <button class="btn-nav" onclick="goToSlide(0)">↺ 回首頁</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 講者備忘錄抽屜 -->
+    <div class="notes-drawer" id="notesDrawer">
+      <div class="notes-title">
+        <span>講者備忘錄 (Speaker Notes)</span>
+        <span style="cursor: pointer;" onclick="toggleNotes()">✕ 關閉</span>
+      </div>
+      <div class="notes-content" id="notesContent">
+        備忘錄內容載入中...
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const notesDrawer = document.getElementById('notesDrawer');
+    const notesContent = document.getElementById('notesContent');
+
+    function updateSlide() {
+      slides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === currentSlide);
+      });
+      const currentNotes = slides[currentSlide].getAttribute('data-notes') || '本頁尚無備忘錄。';
+      notesContent.innerText = currentNotes;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < totalSlides) {
+        currentSlide = index;
+        updateSlide();
+      }
+    }
+
+    function toggleNotes() {
+      notesDrawer.classList.toggle('open');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 's' || e.key === 'S') {
+        toggleNotes();
+      } else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen();
+        }
+      }
+    });
+
+    updateSlide();
+  </script>
+</body>
+</html>
